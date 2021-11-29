@@ -17,26 +17,60 @@ namespace ksqlDBDemo.Controllers
             _message = message;
             _random = random;
         }
-        [HttpPost]
-        public async Task<IActionResult> SendMessage([FromBody] DemoDTO input)
+        [HttpPost("Codigo")]
+        public async Task<IActionResult> GerarNovoCodigo([FromBody] CodeDTO input)
         {
             var num = _random.Next()%1000;
 
+            string message = Newtonsoft.Json.JsonConvert.SerializeObject(new 
+            {
+                id = input.UserId,
+                code = num
+            });
+
             try
             {
-                await _message.Publish(input.name,num);
+                await _message.Publish("demo-code", message);
             }
             catch (Exception e)
             {
                 return BadRequest(e.Message);
             }
 
-            return Created("SendMessage",new { key = input.name , message = num});
+            return Created("GerarNovoCodigo", new { key = input.UserId , message = num});
+        }
+        [HttpPost("Usuario")]
+        public async Task<IActionResult> CadastrarUsuario([FromBody] UserDTO input)
+        {
+            var id = Guid.NewGuid();
+            string message = Newtonsoft.Json.JsonConvert.SerializeObject(new
+            {
+                Name = input.UserName,
+                Id = id
+            });
+
+            try
+            {
+                await _message.Publish("demo-user",message);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+
+            return Created("CadastrarUsuario", new { key = input.UserName, message});
         }
     }
-
-    public class DemoDTO
-    {
-        public string name { get; set; }
-    }
 }
+    
+
+
+public class CodeDTO
+{
+    public string UserId { get; set; }
+}
+public class UserDTO
+{
+    public string UserName { get; set; }
+}
+

@@ -4,6 +4,6 @@ namespace ksqlDBDemo.Service
 {
     public interface IKafkaService
     {
-        Task Publish(string name, int value);
+        Task Publish(string topic, string message);
     }
 }

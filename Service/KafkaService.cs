@@ -1,6 +1,5 @@
 ﻿using Confluent.Kafka;
 using Microsoft.Extensions.Configuration;
-using Newtonsoft.Json;
 using System;
 using System.Net;
 using System.Threading.Tasks;
@@ -18,21 +17,17 @@ namespace ksqlDBDemo.Service
                 ClientId = Dns.GetHostName()
             };
         }
-        public async Task Publish(string name, int number)
+        public async Task Publish(string topic, string message)
         {
             using var p = new ProducerBuilder<Null, string>(_config).Build();
 
             try
             {
-                var dr = await p.ProduceAsync("KSQL-DEMO",
+                var dr = await p.ProduceAsync(topic,
                     new Message<Null, string>
                     {
-                        Value = JsonConvert.SerializeObject(new
-                        {
-                            id = name,
-                            value = number
-                        })
-                    });
+                        Value = message
+                    }) ;
 
                 Console.WriteLine($"Kafka producer -- {DateTime.Now.ToString()} -- {dr.Topic} -- {dr.Value}");
             }
