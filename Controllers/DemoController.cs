@@ -20,7 +20,7 @@ namespace ksqlDBDemo.Controllers
         [HttpPost]
         public async Task<IActionResult> SendMessage([FromBody] DemoDTO input)
         {
-            var num = _random.Next();
+            var num = _random.Next()%1000;
 
             try
             {
